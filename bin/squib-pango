@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+require 'cairo'
+require 'pango'
+
+surface = Cairo::ImageSurface.new(825,1125)
+cc = Cairo::Context.new(surface)
+
+#Background
+white  = [1.0,1.0,1.0, 1]
+red = [1.0,0.0,0.0, 1]
+cc.set_source_rgba(*white)
+cc.paint
+
+#Text with Pango
+cc.set_source_rgba(*red)
+
+layout = cc.create_pango_layout
+layout.text = "Hello, World! \nAll work and no play makes Jack a dull boy. The quick brown fox jumped over the lazy dog. When the tweedle beetles battle with paddles in a puddle, it's called a tweetle beetle puddle pattle battle muddle!"
+layout.width = 625*Pango::SCALE
+layout.height = 100
+layout.wrap = Pango::WRAP_WORD
+layout.justify = true
+layout.alignment = Pango::ALIGN_CENTER
+layout.font_description = Pango::FontDescription.new("Arial 36")
+#Center it vertically
+puts "Height: #{layout.extents[1].height / Pango::SCALE}"
+puts "Height: #{layout.pixel_size[1]*layout.line_count}"
+
+cc.move_to(100,0)
+
+cc.update_pango_layout(layout)
+cc.show_pango_layout(layout)
+
+cc.target.write_to_png("_img/test.png")
+
+puts "Done!"

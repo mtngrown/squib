@@ -23,13 +23,14 @@ module Squib
     # Squib's constructor that sets the immutable properties.
     # 
     # @api public
-    def initialize(width: 825, height: 1125, cards: 1, dpi: 300, config: 'config.yml', &block)
+    def initialize(width: 825, height: 1125, cards: 1, dpi: 300, config: 'config.yml', layout: nil, &block)
       @width=width; @height=height
       @dpi = dpi
       @font = 'Sans 36'
       @cards = []
       cards.times{ @cards << Squib::Card.new(self, width, height) }
       load_config(config)
+      load_layout(layout)
       if block_given?
         instance_eval(&block)
       end
@@ -57,6 +58,13 @@ module Squib
           @dpi = config['dpi'].to_i
         end
       end
+    end
+
+    # Load the layout configuration file, if exists
+    # @api private
+    def load_layout(file)
+      return if file.nil?
+      @layout = YAML.load_file(file)
     end
 
     ##################

@@ -50,3 +50,14 @@ Squib uses the `rcairo` [color parser](https://github.com/rcairo/rcairo/blob/mas
 
 All files opened for reading (e.g. for `png` and `xlsx`) are opened relative to the current directory.
 
+# Custom Layouts
+
+Working with x-y coordinates can be tiresome, and ideally everything in a game prototype should be data-driven. To counter this, many Squib methods allow for a `layout` to be set. In essence, layouts are a way of setting default values for `x, y, width` and `height`. 
+
+To use a layout, set the `layout:` option on a `Deck.new` command to point to a YAML file. Any command that allows a `layout` option can be set with a Ruby symbol or String, and the command will then load the specified `x`, `y`, `width`, and `height`. The individual command can also override these options. See the `use_layout` sample found [here](https://github.com/andymeneely/squib/tree/master/samples/use_layout.rb)
+
+{include:file:samples/custom-layout.yml}
+
+{include:file:samples/use_layout.rb}
+
+Note: YAML is very finnicky about having tabs in the file. Use two spaces for indentation instead.

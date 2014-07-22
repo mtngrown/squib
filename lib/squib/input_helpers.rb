@@ -58,6 +58,19 @@ module Squib
     end
     module_function :radiusify
 
+    def layoutify(p)
+      entry = p[:layout].to_s
+      if entry.nil? #no layout was specified
+        return p[:x], p[:y], p[:width], p[:height]
+      else
+        [:x, :y, :width, :height].each do |coord|
+          p[coord] ||= @layout[entry][coord.to_s] unless @layout[entry][coord.to_s].nil?
+        end
+        return p
+      end
+    end
+    module_function :layoutify
+
     def xyify
       #TODO: Allow negative numbers that subtract from the card width & height
     end

@@ -35,7 +35,42 @@ module Squib
             end
           end
         end
+      end
     end
+
+    # Lays out the cards in range and renders a single PNG
+    #
+    # @example
+    #   save_png_sheet file: 'deck.png', margin: 75, gap: 5, trim: 37
+    #
+    # @option opts cols [Integer] the number of columns in the grid
+    # @option opts file [String] the name of the PNG file to save. See {file:README.md#Specifying_Files Specifying Files}
+    # @option opts dir [String] (_output) the directory to save to. Created if it doesn't exist.
+    # @option opts margin [Integer] (75) the margin around the outside of the page
+    # @option opts gap [Integer] (0) the space in pixels between the cards 
+    # @option opts trim [Integer] (0) the space around the edge of each card to trim (e.g. to cut off the bleed margin for print-and-play)
+    # @return [nil]
+    # @api public
+    def save_png_sheet(opts = {})
+      p = needs(opts, [:file_to_save, :creatable_dir, :margin, :gap, :trim, :cols])
+      width = p[:cols] * @width ; height = (((@cards.size) / p[:cols]) + 1) * @height
+      cc = Cairo::Context.new(Cairo::ImageSurface.new(width,height))
+      x = p[:margin] ; y = p[:margin]
+      @progress_bar.start("Saving PNG sheet to #{p[:dir]}/#{p[:file]}", @cards.size + 1) do |bar|
+        @cards.each_with_index do |card, i|
+          surface = trim(card.cairo_surface, p[:trim], @width, @height)
+          cc.set_source(surface, x, y)
+          cc.paint
+          bar.increment
+          x += surface.width + p[:gap]
+          if x > (width - surface.width - p[:margin])
+            x = p[:margin]
+            y += surface.height + p[:gap]
+          end
+        end
+        cc.target.write_to_png("#{p[:dir]}/#{p[:file]}.png")
+        bar.increment
+      end
     end
 
     # :nodoc:

@@ -11,4 +11,7 @@ Squib::Deck.new(width: 825, height: 1125, cards: 16) do
 
   #Note that our PNGs still are not trimmed even though the pdf ones are
   save_png range: 1, prefix: "save_pdf_"
+
+  # We can also save our PNGs into a single sheet, with two columns
+  save_png_sheet file: 'save_single_sheet.png', cols: 2, margin: 75, gap: 5, trim: 37
 end

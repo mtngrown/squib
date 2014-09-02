@@ -7,6 +7,7 @@ module Squib
       :alpha => 1.0,
       :blend => :none,
       :color => :black,
+      :cols => 1,
       :default_font => 'Arial 36',
       :dir => "_output",
       :ellipsize => :end,

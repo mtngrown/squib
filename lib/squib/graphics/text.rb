@@ -83,13 +83,22 @@ module Squib
       layout
     end
 
+    def fill_background(x,y,layout,fill_color)
+      # when w,h < 0, it was never set. extents[1] are ink extents
+      w = layout.width / Pango::SCALE
+      w = layout.extents[1].width / Pango::SCALE if w < 0
+      h = layout.height / Pango::SCALE
+      h = layout.extents[1].height / Pango::SCALE if h < 0
+      rect(x,y,w,h,0,0,'#0000',fill_color, 0))
+    end
+
     # :nodoc:
     # @api private 
-    def text(str, font, font_size, color, 
+    def text(str, font, font_size, color, fill_color,
              x, y, width, height,
              markup, justify, wrap, ellipsize, 
              spacing, align, valign, hint)
-      Squib.logger.debug {"Placing '#{str}'' with font '#{font}' @ #{x}, #{y}, color: #{color}, etc."}
+      Squib.logger.debug {"Placing '#{str}'' with font '#{font}' @ #{x}, #{y}, color: #{color}, fill_color: #{fill_color} etc."}
       use_cairo do |cc|
         cc.set_source_color(color)
         cc.move_to(x,y)
@@ -107,7 +116,9 @@ module Squib
         layout.spacing = spacing * Pango::SCALE unless spacing.nil? 
         cc.update_pango_layout(layout) 
         valign(cc, layout, x,y, valign)
-        cc.update_pango_layout(layout) ; cc.show_pango_layout(layout)
+        cc.update_pango_layout(layout)
+        fill_background(x,y,layout,fill_color)
+        cc.show_pango_layout(layout)
         draw_text_hint(x,y,layout,hint)
       end
     end
